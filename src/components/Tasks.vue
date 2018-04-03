@@ -3,14 +3,22 @@
     <h1>Tasks</h1>
 
     <form @submit.prevent="addTask">
-      <input type="text" placeholder="Enter a new task..." v-model="task.title">
+      <input type="text" placeholder="Enter a new task..."
+        v-model="task.title" v-validate="'min:5'" name="task"
+      >
+
       <input type="checkbox" id="completed" v-model="task.completed">
       <label for="completed">Completed?</label>
+
+      <p class="alert" v-if="errors.has('task')">{{ errors.first('task') }}</p>
     </form>
 
     <ul v-for="task in tasks">
-      <li>{{ tasks.indexOf(task) + 1 }}. {{ task.title }}</li>
-      <button v-if="!task.completed">Complete</button>
+      <li v-bind:class="{ completed: task.completed }">
+        {{ tasks.indexOf(task) + 1 }}. {{ task.title }}
+      </li>
+      <button v-if="!task.completed" v-on:click="completeTask(task)">Complete</button>
+      <button v-else v-on:click="uncompleteTask(task)">Not completed</button>
     </ul>
     <p v-if="tasks.length < 1">No tasks to see here. Carry on.</p>
     <p>Tasks left to complete: {{ tasksNotCompleted() }}</p>
@@ -32,6 +40,12 @@ export default {
     }
   },
   methods: {
+    completeTask(task) {
+      task.completed = true;
+    },
+    uncompleteTask(task) {
+      task.completed = false;
+    },
     tasksNotCompleted() {
       var notCompleted = 0;
       for (let task of this.tasks) {
@@ -63,7 +77,19 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
+.completed {
+  color: #888;
+  text-decoration: line-through;
+}
 a {
   color: #42b983;
+}
+label {
+  font-size: 14px;
+}
+.alert {
+  font-weight: bold;
+  font-size: 12px;
+  color: #777;
 }
 </style>
