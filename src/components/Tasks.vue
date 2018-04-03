@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
     <h1>Tasks</h1>
+    <ul v-for="task in tasks">
+      <li>{{ task.title }}</li>
+    </ul>
   </div>
 </template>
 
@@ -9,6 +12,10 @@ export default {
   name: 'Tasks',
   data () {
     return {
+      tasks: [
+        { title: 'Learn Vue.js', completed: false },
+        { title: 'Make coffee', completed: true }
+      ]
     }
   }
 }
