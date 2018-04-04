@@ -4,21 +4,24 @@
 
     <form @submit.prevent="addTask">
       <input type="text" placeholder="Enter a new task..."
-        v-model="task.title" v-validate="'min:5'" name="task"
+        v-model="task.title" v-validate="'min:5'" name="title"
       >
 
       <input type="checkbox" id="completed" v-model="task.completed">
       <label for="completed">Completed?</label>
 
-      <p class="alert" v-if="errors.has('task')">{{ errors.first('task') }}</p>
+      <button>Add new task</button>
+
+      <p class="alert" v-if="errors.has('title')">{{ errors.first('title') }}</p>
     </form>
 
     <ul v-for="task in tasks">
+      <i class="fa fa-circle" v-if="!task.completed" v-on:click="completeTask(task)"></i>
+      <i class="fa fa-check-circle" v-else v-on:click="uncompleteTask(task)"></i>
       <li v-bind:class="{ completed: task.completed }">
-        {{ tasks.indexOf(task) + 1 }}. {{ task.title }}
+        {{ task.title }}
       </li>
-      <button v-if="!task.completed" v-on:click="completeTask(task)">Complete</button>
-      <button v-else v-on:click="uncompleteTask(task)">Not completed</button>
+      <i class="fa fa-times-circle" v-on:click="removeTask(task)"></i>
     </ul>
     <p v-if="tasks.length < 1">No tasks to see here. Carry on.</p>
     <p>Tasks left to complete: {{ tasksNotCompleted() }}</p>
@@ -40,12 +43,15 @@ export default {
     }
   },
   methods: {
+
     completeTask(task) {
       task.completed = true;
     },
+
     uncompleteTask(task) {
       task.completed = false;
     },
+
     tasksNotCompleted() {
       var notCompleted = 0;
       for (let task of this.tasks) {
@@ -57,8 +63,18 @@ export default {
     },
 
     addTask() {
-      this.tasks.push({ title: this.task.title, completed: this.task.completed });
-      this.task = { title: '', completed: false };
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.tasks.push({ title: this.task.title, completed: this.task.completed });
+          this.task = { title: '', completed: false };
+        } else {
+          console.log('task in not valid');
+        }
+      })
+    },
+
+    removeTask(task) {
+      this.tasks.splice(this.tasks.indexOf(task), 1);
     }
   }
 }
