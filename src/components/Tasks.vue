@@ -3,8 +3,9 @@
     <h1>Tasks</h1>
 
     <form @submit.prevent="addTask">
+
       <input type="text" placeholder="Enter a new task..."
-        v-model="task.title" v-validate="'min:5'" name="title"
+        v-model="task.title" v-validate="'required|min:5'" name="title"
       >
 
       <input type="checkbox" id="completed" v-model="task.completed">
