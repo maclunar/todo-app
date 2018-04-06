@@ -17,8 +17,7 @@
     </form>
 
     <ul v-for="task in tasks">
-      <i class="fa fa-circle" v-if="!task.completed" v-on:click="completeTask(task)"></i>
-      <i class="fa fa-check-circle" v-else v-on:click="uncompleteTask(task)"></i>
+      <input type="checkbox" v-model="task.completed">
       <li v-bind:class="{ completed: task.completed }">
         {{ task.title }}
       </li>
@@ -76,8 +75,23 @@ export default {
 
     removeTask(task) {
       this.tasks.splice(this.tasks.indexOf(task), 1);
+    },
+  },
+
+  mounted() {
+    if (localStorage.getItem('tasks')) {
+      this.tasks = JSON.parse(localStorage.getItem('tasks'));
     }
-  }
+  },
+
+  watch: {
+    tasks: {
+      handler() {
+        localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      },
+      deep: true,
+    },
+  },
 }
 </script>
 
